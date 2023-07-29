@@ -1,11 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>User Settings</title>
+    <link rel="stylesheet" href="{% static 'css/settings.css' %}">
 </head>
 <body>
-    <div class = "container m-auto">
-        <h1 class="text-2xl leading-none text-gray-900 tracking-tight mt-3"><a href="/">Home</a> / Account Setting for <b>{{user.username}}</b> </h1>
+    <div class="container m-auto">
+        <h1 class="text-2xl leading-none text-gray-900 tracking-tight mt-3"><a href="/">Home</a> / Account Settings for <b>{{ user.username }}</b></h1>
         <form method="post" enctype="multipart/form-data">
             <br>
             {% csrf_token %}
@@ -20,15 +22,16 @@
 
             <!-- Bio -->
             <label for="bio">Bio:</label>
-            <textarea name="bio" id="bio" rows="4" cols="50">{{ user.bio }}</textarea>
+            <textarea name="bio" id="bio" rows="4" cols="50">{{ user_profile.bio }}</textarea>
             <br>
 
             <!-- Location -->
             <label for="location">Location:</label>
-            <input type="text" name="location" id="location" value="{{ user.location }}">
+            <input type="text" name="location" id="location" value="{{ user_profile.location }}">
             <br>
 
             <button type="submit">Save Changes</button>
         </form>
+    </div>
 </body>
 </html>

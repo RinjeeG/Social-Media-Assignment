@@ -9,12 +9,11 @@
 <body>
     <header>
         <div class="container">
-            <h1>Social Media Website</h1>
+            <h1>Sastagram</h1>
             <nav>
                 <ul>
-                    <li><a href="index">Home</a></li>
+                    <li><a href="/">Home</a></li>
                     <li><a href="settings">Setting</a></li>
-                    <li><a href="#">Profile</a></li>
                     <li><a href="logout">Log out</a></li>
                     <!-- Add more navigation links as needed -->
                 </ul>
@@ -75,26 +74,35 @@
             </div>
             {% endfor %}
         </div>
+        <aside class="user-suggestions">
+            <div class="container">
+                <div class="bg-white shadow-md rounded-md overflow-hidden">
+                    <div class="bg-gray-50 border-b border-gray-100 flex items-baseline justify-between py-4 px-6">
+                        <h2 class="font-semibold text-lg">Users You Can Follow</h2>
+                    </div>
+                    <div class="divide-gray-300 divide-gray-50 divide-opacity-50 divide-y px-4">
+                        {% for suggestion in suggestions_username_profile_list %}
+                        <div class="flex items-center justify-between py-3">
+                            <div class="flex flex-1 items-center space-x-4">
+                                <a href="/profile/{{ suggestion.user }}">
+                                    <img src="{{ suggestion.profileimg.url }}" class="bg-gray-200 rounded-full w-10 h-10">
+                                </a>
+                                <div class="flex flex-col">
+                                    <span class="block capitalize font-semibold">{{ suggestion.user }}</span>
+                                    <span class="block capitalize text-sm">{{ suggestion.bio }}</span>
+                                </div>
+                            </div>
+                            <a href="/profile/{{ suggestion.user }}" class="border border-gray-200 font-semibold px-4 py-1 rounded-full hover:bg-pink-600 hover:text-white hover:border-pink-600">View User</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </aside>
     </main>
-
-    <aside class="sidebar">
-        <div class="container">
-            <h2>People to Follow</h2>
-            <ul class="follow-list">
-                {% for user in suggested_users %}
-                <li>
-                    <img src="{{ user.profile_pic_url }}" alt="{{ user.username }} Profile Pic" class="profile-pic">
-                    <span>{{ user.username }}</span>
-                    <button class="follow-button">Follow</button>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </aside>
-
     <footer>
         <div class="container">
-            <p>&copy; 2023 Social Media Website. All rights reserved.</p>
+            <p>&copy; 2023 Sastagram. All rights reserved but not really.</p>
         </div>
     </footer>
 </body>

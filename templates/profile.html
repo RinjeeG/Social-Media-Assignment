@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <title>{{ user_profile.user.username }}'s Profile</title>
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="profile-container">
+        <h1>{{ user_profile.user.username }}'s Profile</h1>
+
+        <!-- Display Profile Image -->
+        <div class="profile-image">
+            <img src="{{ user_profile.profile_img.url }}" alt="Profile Image">
+            {% if request.user.is_authenticated %}
+                {% if user_object.username == user.username %}
+                    <a href="/settings" data-ripple="">Account Settings</a>
+                    {% csrf_token %}
+                    <input type="hidden" name="follower" value="{{ request.user.username }}">
+                    <input type="hidden" name="user" value="{{ user_profile.user.username }}">
+                    <button type="submit">{{button_text}}</button>
+                    {% if user_followers == 0 or user_followers == 1 %}
+                        <span style="color: black; font-size: 27px;"><b>{{user_followers}} follower</b></span>
+                        {% else %}
+                        <span style="color: black; font-size: 27px;"><b>{{user_followers}} followers</b></span>
+                    {% endif %}
+                    <span style="color: black; font-size: 27px;"><b>{{user_following}} following</b></span>
+
+					<input type="hidden" value="{{user.username}}" name="follower" />
+					<input type="hidden" value="{{user_object.username}}" name="user" />
+                {% elif user_profile.user != request.user %}                    
+                    <form method="POST" action="{% url 'follow' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="follower" value="{{ request.user.username }}">
+                        <input type="hidden" name="user" value="{{ user_profile.user.username }}">
+                        <button type="submit">{{button_text}}</button>
+                        {% if user_followers == 0 or user_followers == 1 %}
+                            <span style="color: black; font-size: 27px;"><b>{{user_followers}} follower</b></span>
+                            {% else %}
+                            <span style="color: black; font-size: 27px;"><b>{{user_followers}} followers</b></span>
+                        {% endif %}
+                        <span style="color: black; font-size: 27px;"><b>{{user_following}} following</b></span>
+
+					<input type="hidden" value="{{user.username}}" name="follower" />
+					<input type="hidden" value="{{user_object.username}}" name="user" />
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+        <!-- Display Profile Information -->
+        <div class="profile-info">
+            <h2>Profile Information</h2>
+            <p><strong>Username:</strong> {{ user_profile.user.username }}</p>
+            <p><strong>Email:</strong> {{ user_profile.user.email }}</p>
+            <p><strong>Birthday:</strong> {{ user_profile.birthday|default:"Not provided" }}</p>
+            <p><strong>Location:</strong> {{ user_profile.location|default:"Not provided" }}</p>
+            <p><strong>Bio:</strong> {{ user_profile.bio|default:"No bio available." }}</p>
+            <!-- Add other profile information as needed -->
+        </div>
+
+        <!-- Display User's Posts -->
+        <div class="user-posts">
+            <h2>Posts ({{ user_post_length }})</h2>
+            <ul class="photo-gallery">
+                {% for post in user_posts %}
+                    <li>
+                        <a class="strip" href="{{ post.image.url }}" title="" data-strip-group="mygroup" data-strip-group-options="loop: false">
+                            <img src="{{ post.image.url }}" alt="Post Image"></a>
+                    </li>
+                {% empty %}
+                    <li>No posts yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
