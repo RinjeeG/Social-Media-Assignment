@@ -10,7 +10,6 @@ class Profile(models.Model):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     profile_img = models.ImageField(upload_to='profile_images',default='blank.png')
-    id_user = models.IntegerField(default=0)
     birthday = models.DateTimeField(blank=True, null=True)
     bio = models.TextField(blank = True, null = True)
     location = models.CharField(max_length=50, blank = True) 
@@ -19,7 +18,7 @@ class Profile(models.Model):
 
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default = uuid.uuid4)
-    user = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images')
     caption = models.TextField()
     created_at = models.DateTimeField(default=datetime.now)

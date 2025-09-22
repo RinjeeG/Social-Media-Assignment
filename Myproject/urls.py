@@ -19,6 +19,7 @@ from django.urls import path
 from core import views
 from django.conf import settings
 from django.conf.urls.static import static
+from core.api_views import PostListView
 
 
 
@@ -33,6 +34,7 @@ urlpatterns = [
     path('like-post', views.like_post, name='like-post'),
     path('profile/<str:pk>', views.profile, name='profile'),
     path('follow', views.follow, name='follow'),
+    path('api/posts/', PostListView.as_view(), name='api-posts')
 ]
 urlpatterns = urlpatterns+static(settings.MEDIA_URL,
 document_root=settings.MEDIA_ROOT)

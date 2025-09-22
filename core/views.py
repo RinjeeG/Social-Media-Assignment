@@ -46,8 +46,8 @@ def index(request):
     for users in final_suggestions_list:
         username_profile.append(users.id)
 
-    for ids in username_profile:
-        profile_lists = Profile.objects.filter(id_user=ids)
+    for user_id in username_profile:
+        profile_lists = Profile.objects.filter(user_id=user_id)
         username_profile_list.append(profile_lists)
 
     suggestions_username_profile_list = list(chain(*username_profile_list))
@@ -78,7 +78,7 @@ def signup(request):
                 user_login = auth.authenticate(username=username, password=password)
                 login(request, user_login)
                 user_model = User.objects.get(username=username)
-                new_profile = Profile.objects.create(user=user_model,id_user=user_model.id)
+                new_profile = Profile.objects.create(user=user_model)
                 new_profile.save()
                 login(request, user)
                 return redirect('settings')   
