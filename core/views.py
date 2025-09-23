@@ -17,13 +17,18 @@ def index(request):
     user_following_list = []
     feed = []
     
+    # Include the logged-in user's posts
+    feed_lists = Post.objects.filter(user=user_object)
+    feed.append(feed_lists)
+    
     user_following = FollowersCount.objects.filter(follower = request.user.username)
     
     for users in user_following:
         user_following_list.append(users.user)
     
-    for usernames in user_following_list:
-        feed_lists = Post.objects.filter(user=usernames)
+    for username in user_following_list:
+        user_instance = User.objects.get(username=username)
+        feed_lists = Post.objects.filter(user=user_instance)
         feed.append(feed_lists)
         
     feed_list = list(chain(*feed))
@@ -137,13 +142,13 @@ def settings(request):
 
 def upload(request):
     if request.method == 'POST':
-        user  = request.user.username
+        user  = request.user
         image = request.FILES.get('image_upload')
         caption = request.POST.get('caption')
         
         new_post = Post.objects.create(user=user, image=image, caption=caption)
-        new_post.save()
-        return redirect('signin')
+        messages.success(request, 'Post uploaded successfully!')
+        return redirect('index')
     else:
         return redirect('/')
     
@@ -171,7 +176,7 @@ def like_post(request):
 def profile(request, pk):
     user_object = User.objects.get(username=pk)
     user_profile = Profile.objects.get(user=user_object)
-    user_posts = Post.objects.filter(user=pk)
+    user_posts = Post.objects.filter(user=user_object)
     user_post_length = len(user_posts)
     
     follower = request.user.username
@@ -199,17 +204,16 @@ def profile(request, pk):
 
 def follow(request):
     if request.method == 'POST':
-        follower = request.POST.get('follower')
-        user = request.POST.get('user')
+        follower = User.objects.get(username=request.POST.get('follower'))
+        user = User.objects.get(username=request.POST.get('user'))
         
-        if FollowersCount.objects.filter(follower=follower, user=user).first():
-            delete_follower = FollowersCount.objects.get(follower=follower, user=user)
+        if FollowersCount.objects.filter(follower=follower.username, user=user.username).first():
+            delete_follower = FollowersCount.objects.get(follower=follower.username, user=user.username)
             delete_follower.delete()
-            return redirect('/profile/'+user)
+            return redirect('/profile/' + user.username)
         else:
-            new_follower = FollowersCount.objects.create(follower=follower, user=user)
+            new_follower = FollowersCount.objects.create(follower=follower.username, user=user.username)
             new_follower.save()
-            return redirect('/profile/'+user)
+            return redirect('/profile/' + user.username)
     else: 
         return redirect('/')
-        
