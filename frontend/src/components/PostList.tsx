@@ -17,6 +17,12 @@ const PostList: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     // Fetch posts from Django API and update state
     useEffect(() => {
+        const token = localStorage.getItem('token'); //get token from login
+        if (!token) {
+            setError('No authentication token found. Please log in.');
+            setLoading(false);
+            return;
+        }
         fetch('/api/posts/', {
             credentials: 'include',
             headers: {
