@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './PostList.css';
 
 interface Post{
     id: string;
@@ -14,7 +15,7 @@ const PostList: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
+    // Fetch posts from Django API and update state
     useEffect(() => {
         fetch('/api/posts/', {
             credentials: 'include',
@@ -23,28 +24,20 @@ const PostList: React.FC = () => {
             },
         })
         .then((response) => {
-            console.log('Response status:', response.status);
-            console.log('Response headers:',
-                Object.fromEntries(response.headers));
-                const responseClone = response.clone();
-                responseClone.text().then((text) => console.log('Response body:',text))
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
         .then((data) => {
-            console.log('Parsed JSON:', data);
             if (Array.isArray(data)){
                 setPosts(data);
             } else {
-                console.warn('API returned non-array data:', data);
                 setPosts([]);
             }
             setLoading(false);
         })
         .catch((error) => {
-            console.error('Fetch error:', error);
             setError(error.message);
             setLoading(false);
         });
