@@ -19,7 +19,7 @@ from django.urls import path
 from core import views
 from django.conf import settings
 from django.conf.urls.static import static
-from core.api_views import PostListView
+from core.api_views import PostListView, api_like_post
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
@@ -37,7 +37,8 @@ urlpatterns = [
     path('follow', views.follow, name='follow'),
     path('api/posts/', PostListView.as_view(), name='api-posts'),
     path('api-token-auth/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api-token-refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    path('api-token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/posts/<int:post_id>/like/', api_like_post, name='api-like-post')
 ]
 urlpatterns = urlpatterns+static(settings.MEDIA_URL,
 document_root=settings.MEDIA_ROOT)

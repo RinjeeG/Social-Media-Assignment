@@ -57,6 +57,27 @@ const PostList: React.FC = () => {
       });
   }, [token]); // Re-run whenever token changes
 
+  const handleLike = async (postId: string) => {
+    if (!token) return;
+
+    try {
+        const response = await  fetch(`/api/posts/${postId}/like/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Like failed');
+        }
+        const data = await response.json();
+        setPosts(posts.map(post => post.id === postId ? { ...post, no_of_likes: data.no_of_likes } : post));
+    } catch (error) {
+        console.error('Like error:', error);
+    }
+  };
+
   if (loading) return <p>Loading posts...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -72,6 +93,7 @@ const PostList: React.FC = () => {
               <p><strong>Caption:</strong> {post.caption}</p>
               {post.image && <img src={post.image} alt={post.caption} />}
               <p><strong>Likes:</strong> {post.no_of_likes}</p>
+              <button onClick={() => handleLike(post.id)}>Like</button>
               <p><strong>Posted:</strong> {new Date(post.created_at).toLocaleDateString()}</p>
             </div>
           ))}
