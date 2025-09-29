@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core import views
+from core import views, api_views
 from django.conf import settings
 from django.conf.urls.static import static
 from core.api_views import PostListView, api_like_post
@@ -35,10 +35,11 @@ urlpatterns = [
     path('like-post', views.like_post, name='like-post'),
     path('profile/<str:pk>', views.profile, name='profile'),
     path('follow', views.follow, name='follow'),
-    path('api/posts/', PostListView.as_view(), name='api-posts'),
+    path('api/posts/', api_views.PostListView.as_view(), name='post-list'),
     path('api-token-auth/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api-token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/posts/<int:post_id>/like/', api_like_post, name='api-like-post')
+    path('api/like/', api_views.api_like_post, name='api-like-post'),
+    path('api/logout/', api_views.api_logout, name='api-logout')
 ]
 urlpatterns = urlpatterns+static(settings.MEDIA_URL,
 document_root=settings.MEDIA_ROOT)

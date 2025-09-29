@@ -12,7 +12,7 @@ interface Post {
 }
 
 const PostList: React.FC = () => {
-  const { token } = useAuth();
+  const { token, setToken } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,12 +81,29 @@ const PostList: React.FC = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+        await fetch('api/logout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        setToken(null); //Clear token in context
+        localStorage.removeItem('token');
+    } catch (error) {
+        console.error('Logout error', error)
+    }
+  }
+
   if (loading) return <p>Loading posts...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="post-feed">
       <h1>Post Feed</h1>
+      <button onClick={handleLogout}>Logout</button>
       {posts.length === 0 ? (
         <p>No posts available.</p>
       ) : (
