@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Post
-from .serializers import PostSerializer
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -51,3 +51,34 @@ def api_logout(request):
         return Response({"success": "Logged out"}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": "Logout failed"}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def comment_list_create(request, post_id):
+    try:
+        logger.info(f"Processing request for post_id: {post_id}")
+        if not Post.objects.filter(id=post_id).exists():
+            return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.method == 'GET':
+            comments = Comment.objects.filter(post_id=post_id)
+            if not comments.exists():
+                return Response({"message": "No comments yet"}, status=status.HTTP_200_OK)
+            serializer = CommentSerializer(comments, many=True)
+            return Response(serializer.data)
+
+        elif request.method == 'POST':
+            logger.info(f"Received POST data: {request.data}")
+            data = request.data.copy()
+            data['post'] = post_id
+            data['user'] = request.user.id
+            serializer = CommentSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                logger.info(f"Comment saved for post_id: {post_id}")
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            logger.error(f"Serializer errors: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.error(f"Exception in comment_list_create: {str(e)}")
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -39,7 +39,8 @@ urlpatterns = [
     path('api-token-auth/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api-token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/like/', api_views.api_like_post, name='api-like-post'),
-    path('api/logout/', api_views.api_logout, name='api-logout')
+    path('api/logout/', api_views.api_logout, name='api-logout'),
+    path('api/comments/<str:post_id>/', api_views.comment_list_create, name='comment-list-create'),
 ]
 urlpatterns = urlpatterns+static(settings.MEDIA_URL,
 document_root=settings.MEDIA_ROOT)
