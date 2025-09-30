@@ -15,6 +15,7 @@ interface Comment {
     id: number;
     post: string;
     user: number;
+    username: string;
     text: string;
     created_at: string;
 }
@@ -174,7 +175,7 @@ const PostList: React.FC = () => {
                   <div>
                     {Array.isArray(comments[post.id]) ? (
                       comments[post.id].map((comment: Comment) => (
-                        <p key={comment.id}><strong>User {comment.user}:</strong> {comment.text}</p>
+                        <p key={comment.id}><strong>{comment.username}:</strong> {comment.text}</p>
                       ))
                     ) : (
                       <p>No comments available</p>
