@@ -14,13 +14,12 @@ import logging
 
 class PostListView(ListAPIView):
     permission_classes = [IsAuthenticated] 
-    queryset = Post.objects.all().select_related('user')
+    queryset = Post.objects.all().select_related('user').order_by('-created_at')  # Added ordering
     serializer_class = PostSerializer
 
-    def get(self, request, *args, **kwargs):
-        print("Request auth:", request.auth)  # Debug
-        print("Request headers:", request.headers)  # Debug
-        return super().get(request, *args, **kwargs)
+    def list(self, request, *args, **kwargs):
+        logger.info(f"Fetching posts for user: {request.user.username}")  # Added log
+        return super().list(request, *args, **kwargs)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

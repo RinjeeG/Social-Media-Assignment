@@ -233,7 +233,6 @@ const PostList: React.FC = () => {
           ))}
         </div>
       )}
-      <button onClick={() => login('testuser', 'testpass')}>Login</button> {/* Test login */}
     </div>
   );
 };
