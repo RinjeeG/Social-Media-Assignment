@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import PostList from './components/PostList';
 import Login from './components/Login';
 import ProfilePage from './components/ProfilePage';
+import NavBar from './components/NavBar';
 import './App.css';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -12,6 +13,7 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
+      <NavBar/>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route

@@ -60,7 +60,7 @@ const ProfilePage: React.FC = () => {
         if (image) formData.append('profile_img', image);
 
         try {
-            const response = await fetch('http://localhost:8000/api/profile/', {
+            const response = await fetch('http://localhost:8000/api/profile/update/', {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}`},
                 body: formData,
@@ -71,7 +71,7 @@ const ProfilePage: React.FC = () => {
                 setError(null);
             } else {
                 const errorData = await response.json();
-                console.error('Profile update faiuled:', errorData);
+                console.error('Profile update failed:', errorData);
                 setError('Update failed');
             }
         } catch (error) {

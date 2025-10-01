@@ -181,7 +181,6 @@ const PostList: React.FC = () => {
     <div className="post-feed">
       <h1>Post Feed</h1>
       <button onClick={handleLogout}>Logout</button>
-      <Link to="/profile">Go to Profile</Link>
       <form onSubmit={handleUpload}>
         <input
           type="text"
