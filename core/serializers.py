@@ -24,7 +24,17 @@ class PostSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['user', 'profile_img', 'bio', 'location']
+        fields = ['user', 'profile_img', 'birthday', 'bio', 'location']
+        extra_kwargs = {
+            'user': {'read_only': True},
+            'profile_img': {'required': False},
+        }
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['profile_img'] = instance.profile_img.url if instance.profile_img else None
+        ret['user'] = instance.user.id
+        return ret
         
 class CommentSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField(read_only=True)  # Explicitly mark as read-only

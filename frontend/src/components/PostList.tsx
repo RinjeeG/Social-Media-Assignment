@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './PostList.css';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 interface Post {
   id: string;
@@ -180,6 +181,7 @@ const PostList: React.FC = () => {
     <div className="post-feed">
       <h1>Post Feed</h1>
       <button onClick={handleLogout}>Logout</button>
+      <Link to="/profile">Go to Profile</Link>
       <form onSubmit={handleUpload}>
         <input
           type="text"
