@@ -82,3 +82,19 @@ def comment_list_create(request, post_id):
     except Exception as e:
         logger.error(f"Exception in comment_list_create: {str(e)}")
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def api_create_post(request):
+    try:
+        logger.info(f"Received POST data for new post: {request.data}")
+        serializer = PostSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            logger.info(f"Post saved for user: {request.user.username}")
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        logger.error(f"Serializer errors: {serializer.errors}")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.error(f"Exception in api_create_post: {str(e)}")
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

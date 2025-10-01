@@ -6,6 +6,20 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'user', 'image', 'caption', 'created_at', 'no_of_likes']
+        extra_kwargs = {
+            'user': {'read_only': True},  # Explicitly read-only
+        }
+
+    def create(self, validated_data):
+        # Ensure user is set from request context
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def to_representation(self, instance):
+        # Ensure user is included in output (if needed as ID or username)
+        ret = super().to_representation(instance)
+        ret['user'] = instance.user.id  # Or instance.user.username if preferred
+        return ret
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
