@@ -35,6 +35,7 @@ urlpatterns = [
     path('like-post', views.like_post, name='like-post'),
     path('profile/<str:pk>', views.profile, name='profile'),
     path('follow', views.follow, name='follow'),
+    path('api/signup/', api_views.signup, name='api-signup'),
     path('api/profile/', api_views.profile_detail, name='profile-detail'),
     path('api/profile/update/', api_views.profile_update, name='profile-update'),
     path('api/posts/', api_views.PostListView.as_view(), name='post-list'),

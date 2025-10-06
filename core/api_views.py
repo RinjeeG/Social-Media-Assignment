@@ -9,8 +9,12 @@ from .views import like_post
 from django.http import HttpResponseRedirect
 from .permissions import IsAuthenticatedOrLogout
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout as django_logout
+from django.contrib.auth.models import User
 import logging
+
+logger = logging.getLogger(__name__)
 
 class PostListView(ListAPIView):
     permission_classes = [IsAuthenticated] 
@@ -20,6 +24,30 @@ class PostListView(ListAPIView):
     def list(self, request, *args, **kwargs):
         logger.info(f"Fetching posts for user: {request.user.username}")  # Added log
         return super().list(request, *args, **kwargs)
+
+@api_view(['POST'])
+@permission_classes([])
+def signup(request):
+    logger.info(f"Received signup request data: {request.data}")
+    username = request.data.get('username')
+    password = request.data.get('password')
+    if not username or not password:
+        logger.error("Missing username or password")
+        return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(username=username).exists():
+        logger.error(f"Username {username} already taken")
+        return Response({'error': 'Username already taken'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = User.objects.create_user(username=username, password=password)
+        refresh = RefreshToken.for_user(user)
+        logger.info(f"Created user {username} with refresh token")
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        logger.error(f"Error creating user: {str(e)}")
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -39,7 +67,6 @@ def api_like_post(request):
         return Response({"success": "Like toggled", "no_of_likes": post.no_of_likes}, status=status.HTTP_200_OK)
     return Response({"error": "Failed to like"}, status=status.HTTP_400_BAD_REQUEST)
 
-logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticatedOrLogout])
