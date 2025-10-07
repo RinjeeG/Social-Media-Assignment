@@ -30,15 +30,22 @@ class PostListView(ListAPIView):
 def signup(request):
     logger.info(f"Received signup request data: {request.data}")
     username = request.data.get('username')
+    email = request.data.get('email')
     password = request.data.get('password')
-    if not username or not password:
-        logger.error("Missing username or password")
-        return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+    if not username or not email or not password:
+        logger.error("Missing username, email, or password")
+        return Response({'error': 'Username, email, and password are required'}, status=status.HTTP_400_BAD_REQUEST)
     if User.objects.filter(username=username).exists():
         logger.error(f"Username {username} already taken")
         return Response({'error': 'Username already taken'}, status=status.HTTP_400_BAD_REQUEST)
+    if User.objects.filter(email=email).exists():
+        logger.error(f"Email {email} already taken")
+        return Response({'error': 'Email already taken'}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(username=username, email=email, password=password)
+        # Optionally create a Profile instance (if not auto-created elsewhere)
+        from .models import Profile
+        Profile.objects.get_or_create(user=user)  # Ensure a profile exists
         refresh = RefreshToken.for_user(user)
         logger.info(f"Created user {username} with refresh token")
         return Response({
