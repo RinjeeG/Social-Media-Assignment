@@ -27,7 +27,7 @@ const AppContent: React.FC = () => {
           />
           <Route
             path="/signup"
-            element={!token ? <Signup /> : <Navigate to="/posts" />} // Placeholder, update later
+            element={<Signup />} // Placeholder, update later
           />
           <Route
             path="/posts"
